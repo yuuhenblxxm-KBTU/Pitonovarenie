@@ -37,7 +37,13 @@ x = 5
 y = "John"
 print(x)
 print(y)
+import math
 
+def show_pi_decimals(n):
+    print(round(math.pi, n))
+
+n = int(input("Enter the number of decimal places you want to see for pi: "))
+show_pi_decimals(n)
 x = 4       # x is of type int
 x = "Sally" # x is now of type str
 print(x)
