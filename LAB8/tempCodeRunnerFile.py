@@ -1,0 +1,1 @@
+surface.blit((0, 0))
