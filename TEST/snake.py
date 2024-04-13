@@ -5,7 +5,7 @@ pygame.init()
 
 WIDTH, HEIGHT = 800, 600
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Змейка")
+pygame.display.set_caption("Snake")
 
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -24,7 +24,6 @@ snake_dy = 0
 SNAKE_SPEED = 10
 
 score = 0
-speed_increase = 0.8
 
 font = pygame.font.Font(None, 36)
 
@@ -36,7 +35,7 @@ class Apple:
         self.score = score
 
 def draw_score(score):
-    score_text = font.render(f"Счет: {score}", True, WHITE)
+    score_text = font.render(f"Score: {score}", True, WHITE)
     WIN.blit(score_text, (10, 10))
 
 def draw_snake(snake_list, snake_color):
@@ -59,6 +58,7 @@ apples.append(Apple(random.randint(0, (WIDTH - APPLE_SIZE) // CELL_SIZE) * CELL_
 
 clock = pygame.time.Clock()
 running = True
+paused = False
 
 while running:
     WIN.fill((0, 0, 0))
@@ -66,42 +66,44 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                paused = not paused
 
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and snake_dx == 0:  # Prevent moving directly opposite
-        snake_dx = -CELL_SIZE
-        snake_dy = 0
-    elif keys[pygame.K_RIGHT] and snake_dx == 0:
-        snake_dx = CELL_SIZE
-        snake_dy = 0
-    elif keys[pygame.K_UP] and snake_dy == 0:
-        snake_dy = -CELL_SIZE
-        snake_dx = 0
-    elif keys[pygame.K_DOWN] and snake_dy == 0:
-        snake_dy = CELL_SIZE
-        snake_dx = 0
+    if not paused:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and snake_dx == 0:
+            snake_dx = -CELL_SIZE
+            snake_dy = 0
+        elif keys[pygame.K_RIGHT] and snake_dx == 0:
+            snake_dx = CELL_SIZE
+            snake_dy = 0
+        elif keys[pygame.K_UP] and snake_dy == 0:
+            snake_dy = -CELL_SIZE
+            snake_dx = 0
+        elif keys[pygame.K_DOWN] and snake_dy == 0:
+            snake_dy = CELL_SIZE
+            snake_dx = 0
 
-    snake_x += snake_dx
-    snake_y += snake_dy
+        snake_x += snake_dx
+        snake_y += snake_dy
 
-    if snake_x >= WIDTH or snake_x < 0 or snake_y >= HEIGHT or snake_y < 0:
-        running = False
+        if snake_x >= WIDTH or snake_x < 0 or snake_y >= HEIGHT or snake_y < 0:
+            running = False
 
-    snake_head = [snake_x, snake_y]
-    snake_list.append(snake_head)
+        snake_head = [snake_x, snake_y]
+        snake_list.append(snake_head)
 
-    if len(snake_list) > snake_length:
-        del snake_list[0]
+        if len(snake_list) > snake_length:
+            del snake_list[0]
 
-    for apple in apples:
-        if snake_x == apple.x and snake_y == apple.y:
-            apple.x = random.randint(0, (WIDTH - APPLE_SIZE) // CELL_SIZE) * CELL_SIZE
-            apple.y = random.randint(0, (HEIGHT - APPLE_SIZE) // CELL_SIZE) * CELL_SIZE
-            score += apple.score
-            SNAKE_SPEED += int(SNAKE_SPEED * speed_increase)
-            clock.tick(SNAKE_SPEED)
-            snake_length += 1  # Increase the length of the snake
-
+        for apple in apples:
+            if snake_x == apple.x and snake_y == apple.y:
+                apple.x = random.randint(0, (WIDTH - APPLE_SIZE) // CELL_SIZE) * CELL_SIZE
+                apple.y = random.randint(0, (HEIGHT - APPLE_SIZE) // CELL_SIZE) * CELL_SIZE
+                score += apple.score
+                clock.tick(SNAKE_SPEED)
+                snake_length += 1
 
     for apple in apples:
         draw_apple(apple)
