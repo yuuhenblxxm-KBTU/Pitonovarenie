@@ -100,6 +100,8 @@ while running:
             score += apple.score
             SNAKE_SPEED += int(SNAKE_SPEED * speed_increase)
             clock.tick(SNAKE_SPEED)
+            snake_length += 1  # Increase the length of the snake
+
 
     for apple in apples:
         draw_apple(apple)
